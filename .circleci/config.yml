@@ -4,7 +4,7 @@ version: 2.1
 jobs:
   build-frontend: # req 01-f
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - run:
@@ -16,7 +16,7 @@ jobs:
             npm run build
   build-backend: # req 01-b
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - run:

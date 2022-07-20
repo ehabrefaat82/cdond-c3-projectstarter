@@ -2,7 +2,8 @@ version: 2.1
 
 
 jobs:
-  build-frontend: # req 01-f
+  #-------- build phase --------
+  build-frontend:
     docker:
       - image: cimg/node:13.8.0
     steps:
@@ -10,11 +11,10 @@ jobs:
       - run:
           name: build frontend
           command: |
-            pwd
             cd frontend
             npm install
             npm run build
-  build-backend: # req 01-b
+  build-backend:
     docker:
       - image: cimg/node:13.8.0
     steps:
@@ -22,14 +22,42 @@ jobs:
       - run:
           name: build backend
           command: |
-            pwd
             cd backend
             npm install
             npm run build
+  #-------- test phase --------
+  test-frontend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - run:
+          name: test frontend
+          command: |
+            cd frontend
+            npm install
+            npm run test
+  test-backend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - run:
+          name: test backend
+          command: |
+            cd backend
+            npm install
+            npm run test
+  #-------- end test phase --------
 
-# ------------------------
 workflows:
   default:
     jobs:
       - build-frontend
       - build-backend
+      - test-frontend:
+          requires:
+          - build-frontend
+      - test-backend:
+          requires:
+            - build-backend

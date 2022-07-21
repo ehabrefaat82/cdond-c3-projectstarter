@@ -169,8 +169,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum -y install tar gzip
-            apk add --update ansible
+            apt -y install tar gzip
+            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+            python3 get-pip.py --user
+            python3 -m pip install --user ansible
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             ./aws/install
@@ -182,8 +184,8 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
+#      - build-frontend
+#      - build-backend
 #      - test-frontend:
 #          requires:
 #          - build-frontend
@@ -196,10 +198,10 @@ workflows:
 #      - scan-backend:
 #          requires:
 #            - build-backend
-      - deploy-infrastructure:
-          requires:
-            - build-frontend
-            - build-backend
+#      - deploy-infrastructure:
+#          requires:
+#            - build-frontend
+#            - build-backend
 #            - test-frontend
 #            - test-backend
 #            - scan-frontend

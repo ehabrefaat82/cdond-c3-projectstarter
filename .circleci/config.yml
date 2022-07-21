@@ -166,17 +166,17 @@ jobs:
       - add_ssh_keys:
           fingerprints: [ "b6:b7:70:85:58:3d:ec:3f:a3:60:26:5c:0e:84:0b:67" ]
       # attach workspace
-#      - run:
-#          name: Install dependencies
-#          command: |
-#            sudo apt -y install tar gzip
-#            python3 --version
-#            python3 -m pip -V
-#            python3 -m pip install --user ansible
-#            ansible --version
-#            sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-#            sudo unzip awscliv2.zip
-#            sudo ./aws/install
+      - run:
+          name: Install dependencies
+          command: |
+            sudo apt -y install tar gzip
+            python3 --version
+            python3 -m pip -V
+            python3 -m pip install --user ansible
+            ansible --version
+            sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            sudo unzip awscliv2.zip
+            sudo ./aws/install
 
       - run:
           name: Configure server

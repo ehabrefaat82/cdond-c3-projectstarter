@@ -171,6 +171,7 @@ jobs:
           command: |
             sudo apt -y install tar gzip
             python3 --version
+            python3 -m pip -V
 #            sudo apt-get install python3.10-distutils
 #            sudo apt-get install python3-apt
 #            sudo curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py

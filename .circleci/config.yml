@@ -13,6 +13,9 @@ commands:
           when: on_fail
           command: |
             echo "Destroying environment: << parameters.workflow_id >> "
+            aws cloudcloudformation delete-stack --stack-name udapeople-frontend-${parameters.workflow_id}
+            aws cloudcloudformation delete-stack --stack-name udapeople-backend-${parameters.workflow_id}
+
 
 jobs:
   #-------- build phase --------
@@ -148,12 +151,13 @@ jobs:
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:project,Values=Udapeople" \
-            --output text >> .circleci/ansible/inventory.txt
+            --output text >> ~/.circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      # Here's where you will add some code to rollback on failure
+      - destroy-environment:
+          when: on_fail
 workflows:
   default:
     jobs:

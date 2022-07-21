@@ -172,16 +172,16 @@ jobs:
             sudo apt -y install tar gzip
             sudo apt-get install python3-distutils
             sudo apt-get install python3-apt
-            sudo curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-            sudo python3 get-pip.py --user
-            sudo python3 -m pip install --user ansible
-            sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            sudo unzip awscliv2.zip
-            sudo ./aws/install
-      - run:
-          name: Configure server
-          command: |
-            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
+#            sudo curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+#            sudo python3 get-pip.py --user
+#            sudo python3 -m pip install --user ansible
+#            sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+#            sudo unzip awscliv2.zip
+#            sudo ./aws/install
+#      - run:
+#          name: Configure server
+#          command: |
+#            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       # Here's where you will add some code to rollback on failure
 workflows:
   default:

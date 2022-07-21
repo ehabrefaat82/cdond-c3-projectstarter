@@ -235,4 +235,4 @@ workflows:
 #            - deploy-infrastructure
       - run-migrations:
           requires:
-            - build-backend
+            - scan-backend

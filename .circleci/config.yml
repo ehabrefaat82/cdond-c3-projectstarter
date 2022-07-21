@@ -203,6 +203,9 @@ jobs:
           command: |
             echo "workflow id " ${CIRCLE_WORKFLOW_ID:0:7}
             ls ~/project
+            echo "-------------"
+            ls ~/project/backend
+            echo "-------------"
             if grep -q "has been executed successfully." backend/migrations_dump.txt
             then
               curl https://kvdb.io/5QkEDmw6S9aSQMQpWgQJ6f/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'

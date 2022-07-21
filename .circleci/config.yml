@@ -54,10 +54,6 @@ jobs:
             cd frontend
             npm install
             npm run test
-      - save_cache:
-          key: node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
-          paths:
-            - ~/usr/local/lib/node_modules
   test-backend:
     docker:
       - image: cimg/node:13.8.0
@@ -72,11 +68,37 @@ jobs:
             cd backend
             npm install
             npm run test
-      - save_cache:
-          key: node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
-          paths:
-            - ~/usr/local/lib/node_modules
-  #-------- end test phase --------
+
+  #-------- scan phase --------
+  scan-frontend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+      - run:
+          name: scan frontend
+          command: |
+            cd frontend
+            npm install
+            npm audit --audit-level=critical
+
+  scan-backend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+      - run:
+          name: scan backend
+          command: |
+            cd backend
+            npm install
+            npm audit --audit-level=critical
 
 workflows:
   default:
@@ -87,5 +109,11 @@ workflows:
           requires:
           - build-frontend
       - test-backend:
+          requires:
+            - build-backend
+      - scan-frontend:
+          requires:
+            - build-frontend
+      - scan-backend:
           requires:
             - build-backend

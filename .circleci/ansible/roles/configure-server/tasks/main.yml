@@ -16,7 +16,8 @@
 - name: install dependencies
   become: yes
   shell: |
-    apt install python3.10
+    python3 --version
+#    apt install python3.10
 #    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 #    source ~/.bashrc
 #    nvm --version

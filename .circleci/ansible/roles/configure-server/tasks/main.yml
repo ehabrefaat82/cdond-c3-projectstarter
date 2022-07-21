@@ -13,10 +13,25 @@
   apt:
     autoremove: yes
 
-- name: install dependencies
+- name: "install dependencies."
   become: yes
-  shell: |
-    python3 --version
+  apt:
+    name: ["nodejs", "npm"]
+    state: latest
+    update_cache: yes
+
+- name: "install pm2"
+  become: yes
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+    state: present
+
+#- name: install dependencies
+#  become: yes
+#  shell: |
+#    python3 --version
 #    apt install python3.10
 #    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 #    source ~/.bashrc

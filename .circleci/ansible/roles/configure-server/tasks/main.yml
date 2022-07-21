@@ -13,29 +13,29 @@
   apt:
     autoremove: yes
 
-- name: "install dependencies."
-  become: yes
-  apt:
-    name: ["nodejs", "npm"]
-    state: latest
-    update_cache: yes
-
-- name: "install pm2"
-  become: yes
-  npm:
-    name: pm2
-    global: yes
-    production: yes
-    state: present
-
-#- name: install dependencies
+#- name: "install dependencies."
 #  become: yes
-#  shell: |
-#    python3 --version
+#  apt:
+#    name: ["nodejs", "npm"]
+#    state: latest
+#    update_cache: yes
+#
+#- name: "install pm2"
+#  become: yes
+#  npm:
+#    name: pm2
+#    global: yes
+#    production: yes
+#    state: present
+
+- name: install dependencies
+  become: yes
+  shell: |
+    python3 --version
 #    apt install python3.10
-#    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-#    source ~/.bashrc
-#    nvm --version
-#    nvm install v16
-#    npm install -g npm@8.14.0
-#    npm install --global --production pm2
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+    source ~/.bashrc
+    nvm --version
+    nvm install v16
+    npm install -g npm@8.14.0
+    npm install --global --production pm2

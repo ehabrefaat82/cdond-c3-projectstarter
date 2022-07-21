@@ -198,9 +198,10 @@ jobs:
       - run:
           name: Send migration results to kvdb
           command: |
+            echo "workflow id " ${CIRCLE_WORKFLOW_ID:0:7}
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl https://kvdb.io/7PdMTv1NWcokTDBjDGzZMT/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+              curl https://kvdb.io/5QkEDmw6S9aSQMQpWgQJ6f/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       # Here's where you will add some code to rollback on failure
 workflows:
@@ -218,9 +219,9 @@ workflows:
 #      - scan-frontend:
 #          requires:
 #            - build-frontend
-#      - scan-backend:
-#          requires:
-#            - build-backend
+      - scan-backend:
+          requires:
+            - build-backend
 #      - deploy-infrastructure:
 #          requires:
 #            - build-frontend

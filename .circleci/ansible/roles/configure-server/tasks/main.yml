@@ -16,10 +16,10 @@
 - name: install dependencies
   become: yes
   shell: |
-    apt install python3
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-    source ~/.bashrc
-    nvm --version
-    nvm install v16
-    npm install -g npm@8.14.0
-    npm install --global --production pm2
+    apt install python3.10
+#    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+#    source ~/.bashrc
+#    nvm --version
+#    nvm install v16
+#    npm install -g npm@8.14.0
+#    npm install --global --production pm2

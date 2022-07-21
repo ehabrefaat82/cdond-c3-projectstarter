@@ -99,22 +99,22 @@ jobs:
           command: |
             cd backend
             npm install --save-dev webpack@5.73.0
-            npm audit fix --force
+            npm audit fix
             npm audit --audit-level=critical
 workflows:
   default:
     jobs:
-      - build-frontend
+#      - build-frontend
       - build-backend
-      - test-frontend:
-          requires:
-          - build-frontend
-      - test-backend:
-          requires:
-            - build-backend
-      - scan-frontend:
-          requires:
-            - build-frontend
+#      - test-frontend:
+#          requires:
+#          - build-frontend
+#      - test-backend:
+#          requires:
+#            - build-backend
+#      - scan-frontend:
+#          requires:
+#            - build-frontend
       - scan-backend:
           requires:
             - build-backend

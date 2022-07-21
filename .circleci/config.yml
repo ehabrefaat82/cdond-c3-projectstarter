@@ -170,8 +170,9 @@ jobs:
           name: Install dependencies
           command: |
             sudo apt -y install tar gzip
-            sudo apt-get install python3.10-distutils
-            sudo apt-get install python3-apt
+            python3 --version
+#            sudo apt-get install python3.10-distutils
+#            sudo apt-get install python3-apt
 #            sudo curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 #            sudo python3 get-pip.py --user
 #            sudo python3 -m pip install --user ansible

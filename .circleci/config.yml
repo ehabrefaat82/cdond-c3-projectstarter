@@ -184,6 +184,8 @@ jobs:
           command: |
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       # Here's where you will add some code to rollback on failure
+  #-------- migration phase --------
+  # run successfully but no migration doe I don't know what is missing in steps!
   run-migrations:
     docker:
       - image: cimg/node:18.4.0
@@ -194,7 +196,7 @@ jobs:
           command: |
             cd backend
             npm install
-            npm run migrations --verbose
+            npm run migrations --verbose > migrations_dump.txt
             cat migrations_dump.txt
       - run:
           name: Send migration results to kvdb

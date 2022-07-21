@@ -13,20 +13,20 @@
   apt:
     autoremove: yes
 
-#- name: "install dependencies."
-#  become: yes
-#  apt:
-#    name: ["nodejs", "npm"]
-#    state: latest
-#    update_cache: yes
-#
-#- name: "install pm2"
-#  become: yes
-#  npm:
-#    name: pm2
-#    global: yes
-#    production: yes
-#    state: present
+- name: "install dependencies."
+  become: yes
+  apt:
+    name: ["nodejs", "npm"]
+    state: latest
+    update_cache: yes
+
+- name: "install pm2"
+  become: yes
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+    state: present
 
 #- name: install python 3.10
 #  become: yes
@@ -42,14 +42,14 @@
 #- debug: var=out.stdout_lines
 
 
-- name: install node, npm, pm2
-  become: yes
-  register: out
-  shell: |
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-    source ~/.bashrc
-#    nvm --version
-#    nvm install v16
-#    npm install -g npm@8.15.0
-#    npm install --global --production pm2
-- debug: var=out.stdout_lines
+#- name: install node, npm, pm2
+#  become: yes
+#  register: out
+#  shell: |
+#    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+#    source ~/.bashrc
+##    nvm --version
+##    nvm install v16
+##    npm install -g npm@8.15.0
+##    npm install --global --production pm2
+#- debug: var=out.stdout_lines

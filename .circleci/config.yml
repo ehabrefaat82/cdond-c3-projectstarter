@@ -160,7 +160,7 @@ jobs:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
   configure-infrastructure:
     docker:
-      - image: cimg/python:3.10.5
+      - image: cimg/python:3.8
     steps:
       - checkout
       - add_ssh_keys:

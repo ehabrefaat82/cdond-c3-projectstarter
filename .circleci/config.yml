@@ -110,7 +110,7 @@ jobs:
   #-------- scan phase --------
   scan-frontend:
     docker:
-      - image: cimg/python:3.10.5-node
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -124,7 +124,7 @@ jobs:
             npm audit fix --audit-level=critical --force
   scan-backend:
     docker:
-      - image: cimg/python:3.10.5-node
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:

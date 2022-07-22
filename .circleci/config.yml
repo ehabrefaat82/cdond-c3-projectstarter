@@ -21,7 +21,7 @@ commands:
       - run:
           name: update packages
           command: |
-            cat /etc/issue
+            cat /etc/os-release
             sudo apt update
       - run:
           name: update python

@@ -269,6 +269,10 @@ jobs:
           name: Install dependencies
           command: |
             sudo apt -y install tar gzip
+            sudo apt install nodejs
+            sudo apt install npm
+            node --version
+            npm --version
             python3 --version
             python3 -m pip -V
             python3 -m pip install --user ansible
@@ -276,9 +280,6 @@ jobs:
             sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             sudo unzip awscliv2.zip
             sudo ./aws/install
-            sudo apt install npm
-            node --version
-            npm --version
             cat ~/project/.circleci/ansible/inventory.txt
       - run:
           name: deploy backend

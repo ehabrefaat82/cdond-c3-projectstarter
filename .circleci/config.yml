@@ -165,8 +165,8 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: [ "b6:b7:70:85:58:3d:ec:3f:a3:60:26:5c:0e:84:0b:67" ]
-      - attach_workspace:
-          at: ~/project/.circleci/ansible
+#      - attach_workspace:
+#          at: ~/project/.circleci/ansible
       - run:
           name: Install dependencies
           command: |
@@ -182,7 +182,7 @@ jobs:
       - run:
           name: Configure server
           command: |
-            ansible-playbook -i inventory.txt .circleci/ansible/configure-server.yml
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       # Here's where you will add some code to rollback on failure
@@ -191,7 +191,7 @@ jobs:
   # run successfully but no migration doe I don't know what is missing in steps!
   run-migrations:
     docker:
-      - image: cimg/node:18.4.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - run:
@@ -271,31 +271,31 @@ workflows:
 #      - read-from-ws:
 #          requires:
 #            - save-to-ws
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires:
-          - build-frontend
-      - test-backend:
-          requires:
-            - build-backend
-      - scan-frontend:
-          requires:
-            - build-frontend
-      - scan-backend:
-          requires:
-            - build-backend
-      - deploy-infrastructure:
-          requires:
-            - build-frontend
-            - build-backend
-            - test-frontend
-            - test-backend
-            - scan-frontend
-            - scan-backend
-      - configure-infrastructure:
-          requires:
-            - deploy-infrastructure
+#      - build-frontend
+#      - build-backend
+#      - test-frontend:
+#          requires:
+#          - build-frontend
+#      - test-backend:
+#          requires:
+#            - build-backend
+#      - scan-frontend:
+#          requires:
+#            - build-frontend
+#      - scan-backend:
+#          requires:
+#            - build-backend
+#      - deploy-infrastructure:
+#          requires:
+#            - build-frontend
+#            - build-backend
+#            - test-frontend
+#            - test-backend
+#            - scan-frontend
+#            - scan-backend
+      - configure-infrastructure
+#          requires:
+#            - deploy-infrastructure
       - run-migrations:
           requires:
             - configure-infrastructure

@@ -188,7 +188,6 @@ jobs:
       # Here's where you will add some code to rollback on failure
 
   #-------- migration phase --------
-  # run successfully but no migration doe I don't know what is missing in steps!
   run-migrations:
     docker:
       - image: cimg/node:13.8.0
@@ -217,7 +216,45 @@ jobs:
               curl https://kvdb.io/5QkEDmw6S9aSQMQpWgQJ6f/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       # Here's where you will add some code to rollback on failure
-
+  deploy-frontend:
+    docker:
+      - image: amazon/aws-cli
+    # attach workspace
+    steps:
+      - checkout
+      - run:
+          name: Install tar utility
+          command: |
+            yum -y install tar gzip
+      - run:
+          name: install python3
+          command: |
+            dnf install python3
+            python3 --version
+      - run:
+          name: install node
+          command: |
+            curl -sL https://rpm.nodesource.com/setup_10.x | sudo bash -
+            yum install -y nodejs
+            node --version
+            npm --version
+      - run:
+          name: Get backend url
+          command: |
+            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=Udapeople" --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
+            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+            cat frontend/.env
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            npm install
+            npm run build
+            tar -czvf artifact-477104084809.tar.gz dist
+            aws s3 cp dist s3://udapeople-477104084809 --recursive
+      # Here's where you will add some code to rollback on failure
   save-to-ws:
     docker:
       - image: amazon/aws-cli
@@ -290,6 +327,7 @@ workflows:
 #      - configure-infrastructure
 #          requires:
 #            - deploy-infrastructure
-      - run-migrations
+#      - run-migrations:
 #          requires:
 #            - configure-infrastructure
+      - deploy-frontend

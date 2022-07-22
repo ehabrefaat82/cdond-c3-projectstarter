@@ -223,6 +223,7 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
+            sudo apt -y install tar gzip
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:project,Values=Udapeople" \
@@ -245,6 +246,7 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
+            sudo apt -y install tar gzip
             cat ~/project/.circleci/ansible/inventory.txt
             echo "------------"
             cat workspace/inventory.txt

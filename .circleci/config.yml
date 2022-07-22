@@ -21,17 +21,21 @@ commands:
       - run:
           name: update packages
           command: |
-            sudo add-apt-repository --yes ppa:deadsnakes/ppa
             sudo apt update
       - run:
           name: update python
           command: |
-            sudo apt install -y software-properties-common
             
-            echo "---------------"
-            sudo apt install -y python3.9
+            sudo apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget libbz2-dev
+            wget https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tgz
+            tar -xf Python-3.8.0.tgz
+            cd Python-3.8.0
+            ./configure --enable-optimizations
+            make -j 8
+            sudo make altinstall
             echo "---------------"
             python3 --version
+            ls /usr/bin/python3.9
             ls -1 /usr/bin/python*
             env
       - run:

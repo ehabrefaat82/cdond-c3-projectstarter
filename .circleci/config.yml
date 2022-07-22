@@ -185,7 +185,6 @@ jobs:
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-      # Here's where you will add some code to rollback on failure
 
   #-------- migration phase --------
   run-migrations:
@@ -256,6 +255,45 @@ jobs:
             tar -czvf artifact-864bbda.tar.gz dist
             aws s3 cp dist s3://udapeople-864bbda --recursive
       # Here's where you will add some code to rollback on failure
+
+  deploy-backend:
+    docker:
+      - image: cimg/python:3.10.5
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: [ "b6:b7:70:85:58:3d:ec:3f:a3:60:26:5c:0e:84:0b:67" ]
+      #      - attach_workspace:
+      #          at: ~/project/.circleci/ansible
+      - run:
+          name: Install dependencies
+          command: |
+            sudo apt -y install tar gzip
+            python3 --version
+            python3 -m pip -V
+            python3 -m pip install --user ansible
+            ansible --version
+            sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            sudo unzip awscliv2.zip
+            sudo ./aws/install
+            cat ~/project/.circleci/ansible/inventory.txt
+      - run:
+          name: deploy backend
+          command: |
+            cd backend
+            npm i
+            npm run build
+            cd ..
+            # Zip the directory
+            tar -C backend -czvf artifact.tar.gz .
+            cd .circleci/ansible
+            echo "Contents  of the inventory.txt file is -------"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+#      - destroy-environment:
+#          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+
+
   save-to-ws:
     docker:
       - image: amazon/aws-cli
@@ -331,4 +369,5 @@ workflows:
 #      - run-migrations:
 #          requires:
 #            - configure-infrastructure
-      - deploy-frontend
+#      - deploy-frontend
+      - deploy-backend

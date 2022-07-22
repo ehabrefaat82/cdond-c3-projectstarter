@@ -1,0 +1,11 @@
+- name: "extract file"
+  become: yes
+  shell: |
+    tar –xvzf artifact.tar.gz
+
+- name: "run backend"
+  become: yes
+  shell: |
+    npm install
+    pm2 stop default
+    pm2 start npm -- start

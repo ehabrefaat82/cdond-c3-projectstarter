@@ -258,7 +258,7 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: cimg/python:3.10.5
+      - image: cimg/python:3.10.5-node
     steps:
       - checkout
       - add_ssh_keys:
@@ -269,9 +269,6 @@ jobs:
           name: Install dependencies
           command: |
             sudo apt -y install tar gzip
-            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-            sudo apt install nodejs
-            sudo apt install npm
             node --version
             npm --version
             python3 --version

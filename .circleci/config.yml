@@ -178,13 +178,13 @@ jobs:
             sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             sudo unzip awscliv2.zip
             sudo ./aws/install
-            echo "--------inventory.txt --------"
-            cat inventory.txt
-
+            cat ~/project/.circleci/ansible/inventory.txt
       - run:
           name: Configure server
           command: |
             ansible-playbook -i inventory.txt .circleci/ansible/configure-server.yml
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
       # Here's where you will add some code to rollback on failure
 
   #-------- migration phase --------

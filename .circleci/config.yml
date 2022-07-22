@@ -121,8 +121,7 @@ jobs:
           command: |
             cd frontend
             npm install
-#            npm audit fix --audit-level=critical --force
-#            npm audit --audit-level=critical
+            npm audit fix --audit-level=critical --force
   scan-backend:
     docker:
       - image: cimg/python:3.10.5-node
@@ -136,8 +135,7 @@ jobs:
           command: |
             cd backend
             npm install
-#            npm audit fix --audit-level=critical --force
-#            npm audit --audit-level=critical
+            npm audit fix --audit-level=critical --force
   #-------- deploy-infra phase --------
   deploy-infrastructure:
     docker:
@@ -302,21 +300,20 @@ jobs:
 workflows:
   default:
     jobs:
-      - smoke-test
-#      - build-frontend
-#      - build-backend
-#      - test-frontend:
-#          requires:
-#          - build-frontend
-#      - test-backend:
-#          requires:
-#            - build-backend
-#      - scan-frontend:
-#          requires:
-#            - build-frontend
-#      - scan-backend:
-#          requires:
-#            - build-backend
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires:
+          - build-frontend
+      - test-backend:
+          requires:
+            - build-backend
+      - scan-frontend:
+          requires:
+            - build-frontend
+      - scan-backend:
+          requires:
+            - build-backend
 #      - deploy-infrastructure:
 #          requires:
 #            - build-frontend

@@ -21,7 +21,7 @@ jobs:
   #-------- build phase --------
   build-frontend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: cimg/python:3.10.5-node
     steps:
       - checkout
       - restore_cache:
@@ -39,7 +39,7 @@ jobs:
             - ~/usr/local/lib/node_modules
   build-backend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: cimg/python:3.10.5-node
     steps:
       - checkout
       - restore_cache:
@@ -58,7 +58,7 @@ jobs:
   #-------- test phase --------
   test-frontend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: cimg/python:3.10.5-node
     steps:
       - checkout
       - restore_cache:
@@ -72,7 +72,7 @@ jobs:
             npm run test
   test-backend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: cimg/python:3.10.5-node
     steps:
       - checkout
       - restore_cache:
@@ -88,7 +88,7 @@ jobs:
   #-------- scan phase --------
   scan-frontend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: cimg/python:3.10.5-node
     steps:
       - checkout
       - restore_cache:
@@ -103,7 +103,7 @@ jobs:
             npm audit --audit-level=critical
   scan-backend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: cimg/python:3.10.5-node
     steps:
       - checkout
       - restore_cache:
@@ -160,7 +160,7 @@ jobs:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
   configure-infrastructure:
     docker:
-      - image: cimg/python:3.10.5
+      - image: cimg/python:3.10.5-node
     steps:
       - checkout
       - add_ssh_keys:
@@ -189,7 +189,7 @@ jobs:
   #-------- migration phase --------
   run-migrations:
     docker:
-      - image: cimg/node:13.8.0
+      - image: cimg/python:3.10.5-node
     steps:
       - checkout
       - run:
@@ -326,13 +326,27 @@ jobs:
 
   save-to-ws:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/python:3.10.5-node
     steps:
       - checkout
       - run:
           name: Install tar utility
           command: |
-            yum -y install tar gzip
+            sudo apt -y install tar gzip
+      - run:
+          name: check python, node, pip
+          command: |
+            node --version
+            npm --version
+            python3 --version
+            python3 -m pip -V
+      - run:
+          name: Install aws cli
+          command: |
+            sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            sudo unzip awscliv2.zip
+            sudo ./aws/install
+
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -367,45 +381,45 @@ jobs:
 workflows:
   default:
     jobs:
-#      - save-to-ws
+      - save-to-ws
 #      - read-from-ws:
 #          requires:
 #            - save-to-ws
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires:
-          - build-frontend
-      - test-backend:
-          requires:
-            - build-backend
-      - scan-frontend:
-          requires:
-            - build-frontend
-      - scan-backend:
-          requires:
-            - build-backend
-      - deploy-infrastructure:
-          requires:
-            - build-frontend
-            - build-backend
-            - test-frontend
-            - test-backend
-            - scan-frontend
-            - scan-backend
-      - configure-infrastructure:
-          requires:
-            - deploy-infrastructure
-      - run-migrations:
-          requires:
-            - configure-infrastructure
-      - deploy-frontend:
-          requires:
-            - run-migrations
-      - deploy-backend:
-          requires:
-            - run-migrations
-      - smoke-test:
-          requires:
-            - deploy-frontend
-            - deploy-backend
+#      - build-frontend
+#      - build-backend
+#      - test-frontend:
+#          requires:
+#          - build-frontend
+#      - test-backend:
+#          requires:
+#            - build-backend
+#      - scan-frontend:
+#          requires:
+#            - build-frontend
+#      - scan-backend:
+#          requires:
+#            - build-backend
+#      - deploy-infrastructure:
+#          requires:
+#            - build-frontend
+#            - build-backend
+#            - test-frontend
+#            - test-backend
+#            - scan-frontend
+#            - scan-backend
+#      - configure-infrastructure:
+#          requires:
+#            - deploy-infrastructure
+#      - run-migrations:
+#          requires:
+#            - configure-infrastructure
+#      - deploy-frontend:
+#          requires:
+#            - run-migrations
+#      - deploy-backend:
+#          requires:
+#            - run-migrations
+#      - smoke-test:
+#          requires:
+#            - deploy-frontend
+#            - deploy-backend

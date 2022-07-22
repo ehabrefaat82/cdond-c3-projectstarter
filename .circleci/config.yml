@@ -15,7 +15,7 @@ commands:
             echo "Destroying environment: << parameters.workflow_id >> "
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
-  install-prerequisites:
+  install-dependencies:
     description: Install ansible, and aws cli
     steps:
       - run:
@@ -141,16 +141,13 @@ jobs:
             npm update kind-of --depth 10
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
-  #-------- deployment phase --------
+  #-------- deploy-infra phase --------
   deploy-infrastructure:
     docker:
       - image: cimg/python:3.10.5-node
     steps:
       - checkout
-      - run:
-          name: Install tar utility
-          command: |
-            yum -y install tar gzip
+      - install-dependencies
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -180,27 +177,17 @@ jobs:
             - inventory.txt
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+  #-------- config-infra phase --------
   configure-infrastructure:
     docker:
       - image: cimg/python:3.10.5-node
     steps:
       - checkout
+      - install-dependencies
       - add_ssh_keys:
           fingerprints: [ "b6:b7:70:85:58:3d:ec:3f:a3:60:26:5c:0e:84:0b:67" ]
       - attach_workspace:
           at: ~/project/.circleci/ansible
-      - run:
-          name: Install dependencies
-          command: |
-            sudo apt -y install tar gzip
-            python3 --version
-            python3 -m pip -V
-            python3 -m pip install --user ansible
-            ansible --version
-            sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            sudo unzip awscliv2.zip
-            sudo ./aws/install
-            cat ~/project/.circleci/ansible/inventory.txt
       - run:
           name: Configure server
           command: |
@@ -208,7 +195,7 @@ jobs:
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
-  #-------- migration phase --------
+  #-------- DB migration phase --------
   run-migrations:
     docker:
       - image: cimg/python:3.10.5-node
@@ -236,30 +223,14 @@ jobs:
             then
               curl https://kvdb.io/5QkEDmw6S9aSQMQpWgQJ6f/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
-      # Here's where you will add some code to rollback on failure
+  #-------- deploy-frontend phase --------
   deploy-frontend:
     docker:
       - image: cimg/python:3.10.5-node
     # attach workspace
     steps:
       - checkout
-      - run:
-          name: Install tar utility
-          command: |
-            yum -y install tar gzip
-      - run:
-          name: install python3
-          command: |
-            yum update -y
-            yum install -y python3
-            python3 --version
-      - run:
-          name: install node
-          command: |
-            curl -sL https://rpm.nodesource.com/setup_10.x | bash -
-            yum install -y nodejs
-            node --version
-            npm --version
+      - install-dependencies
       - run:
           name: Get backend url
           command: |
@@ -276,26 +247,17 @@ jobs:
             npm run build
             tar -czvf artifact-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      # Here's where you will add some code to rollback on failure
-
+  #-------- deploy-backend phase --------
   deploy-backend:
     docker:
       - image: cimg/python:3.10.5-node
     steps:
       - checkout
+      - install-dependencies
       - add_ssh_keys:
           fingerprints: [ "b6:b7:70:85:58:3d:ec:3f:a3:60:26:5c:0e:84:0b:67" ]
       - attach_workspace:
           at: ~/project/.circleci/ansible
-      - run:
-          name: Install dependencies
-          command: |
-            sudo apt -y install tar gzip
-            python3 --version
-            python3 -m pip -V
-            python3 -m pip install --user ansible
-            ansible --version
-            cat ~/project/.circleci/ansible/inventory.txt
       - run:
           name: deploy backend
           command: |
@@ -311,9 +273,6 @@ jobs:
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-#      - destroy-environment:
-#          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-
   smoke-test:
     docker:
       - image: alpine/curl
@@ -322,7 +281,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export API_URL="http://34.238.44.56:3030"
+            export API_URL="http://${CIRCLE_WORKFLOW_ID:0:7}:3030"
             echo "${API_URL}"
       - run:
           name: Backend smoke test.
@@ -340,112 +299,49 @@ jobs:
             echo ${URL}
             if curl -s ${URL} | grep "Welcome"
             then
-            # Change this to 0 after the job fails
-              return 1
+              return 0
             else
               return 1
             fi
 
-  save-to-ws:
-    docker:
-      - image: cimg/python:3.10.5-node
-    steps:
-      - checkout
-      - install-prerequisites
-#      - run:
-#          name: install ansible
-#          command: |
-#            python3 -m pip install --user ansible
-#      - run:
-#          name: Install aws cli
-#          command: |
-#            sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-#            sudo unzip awscliv2.zip
-#            sudo ./aws/install
-#      - run:
-#          name: check python, node, pip, ansible and aws cli
-#          command: |
-#            tar --version
-#            node --version
-#            npm --version
-#            python3 --version
-#            python3 -m pip -V
-#            ansible --version
-#            aws --version
-
-      - run:
-          name: Add back-end ip to ansible inventory
-          command: |
-            aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:project,Values=Udapeople" \
-            --output text >> ~/project/.circleci/ansible/inventory.txt
-      - run:
-          name: view file content
-          command: |
-            cat ~/project/.circleci/ansible/inventory.txt
-      - persist_to_workspace:
-          root: ~/project/.circleci/ansible
-          paths:
-            - inventory.txt
-  read-from-ws:
-    docker:
-      - image: cimg/python:3.10.5-node
-    steps:
-      - checkout
-      - run:
-          name: Install tar utility
-          command: |
-            yum -y install tar gzip
-      - attach_workspace:
-          at: ~/project/.circleci/ansible
-      - run:
-          name: Add back-end ip to ansible inventory
-          command: |
-            cat ~/project/.circleci/ansible/inventory.txt
-            echo "------------"
 workflows:
   default:
     jobs:
-      - save-to-ws
-#      - read-from-ws:
-#          requires:
-#            - save-to-ws
-#      - build-frontend
-#      - build-backend
-#      - test-frontend:
-#          requires:
-#          - build-frontend
-#      - test-backend:
-#          requires:
-#            - build-backend
-#      - scan-frontend:
-#          requires:
-#            - build-frontend
-#      - scan-backend:
-#          requires:
-#            - build-backend
-#      - deploy-infrastructure:
-#          requires:
-#            - build-frontend
-#            - build-backend
-#            - test-frontend
-#            - test-backend
-#            - scan-frontend
-#            - scan-backend
-#      - configure-infrastructure:
-#          requires:
-#            - deploy-infrastructure
-#      - run-migrations:
-#          requires:
-#            - configure-infrastructure
-#      - deploy-frontend:
-#          requires:
-#            - run-migrations
-#      - deploy-backend:
-#          requires:
-#            - run-migrations
-#      - smoke-test:
-#          requires:
-#            - deploy-frontend
-#            - deploy-backend
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires:
+          - build-frontend
+      - test-backend:
+          requires:
+            - build-backend
+      - scan-frontend:
+          requires:
+            - build-frontend
+      - scan-backend:
+          requires:
+            - build-backend
+      - deploy-infrastructure:
+          requires:
+            - build-frontend
+            - build-backend
+            - test-frontend
+            - test-backend
+            - scan-frontend
+            - scan-backend
+      - configure-infrastructure:
+          requires:
+            - deploy-infrastructure
+      - run-migrations:
+          requires:
+            - configure-infrastructure
+      - deploy-frontend:
+          requires:
+            - run-migrations
+      - deploy-backend:
+          requires:
+            - run-migrations
+      - smoke-test:
+          requires:
+            - deploy-frontend
+            - deploy-backend

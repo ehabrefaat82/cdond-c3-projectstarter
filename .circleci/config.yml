@@ -27,8 +27,8 @@ commands:
           command: |
             sudo apt install -y software-properties-common
             sudo add-apt-repository --yes ppa:deadsnakes/ppa
+            echo "---------------"
             sudo apt install -y python3.9
-            sudo apt-get -f install
             echo "---------------"
             python3 --version
             ls -1 /usr/bin/python*

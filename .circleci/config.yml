@@ -259,7 +259,6 @@ jobs:
   deploy-backend:
     docker:
       - image: cimg/python:3.10.5
-      - image: cimg/node:13.8.0
     steps:
       - checkout
       - add_ssh_keys:
@@ -277,6 +276,7 @@ jobs:
             sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             sudo unzip awscliv2.zip
             sudo ./aws/install
+            sudo apt install npm
             node --version
             npm --version
             cat ~/project/.circleci/ansible/inventory.txt

@@ -273,7 +273,6 @@ jobs:
             python3 -m pip -V
             python3 -m pip install --user ansible
             ansible --version
-            
             cat ~/project/.circleci/ansible/inventory.txt
       - run:
           name: deploy backend
@@ -283,7 +282,9 @@ jobs:
             npm run build
             cd ..
             # Zip the directory
+            pwd
             tar -C backend -czvf artifact.tar.gz .
+            ls
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt

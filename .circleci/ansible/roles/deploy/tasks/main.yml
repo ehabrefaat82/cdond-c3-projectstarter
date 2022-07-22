@@ -6,7 +6,7 @@
 - name: "extract file"
   become: yes
   shell: |
-    tar -xf ~/artifact.tar.gz 
+    tar -xvzf artifact.tar.gz 
 
 - name: "run backend"
   become: yes

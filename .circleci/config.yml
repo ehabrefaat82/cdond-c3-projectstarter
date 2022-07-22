@@ -113,6 +113,7 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - install-dependencies
       - restore_cache:
           keys:
             - node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}

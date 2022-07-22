@@ -277,8 +277,6 @@ jobs:
             sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             sudo unzip awscliv2.zip
             sudo ./aws/install
-#            curl -sL https://rpm.nodesource.com/setup_10.x | sudo bash -
-#            yum install -y nodejs
             node --version
             npm --version
             cat ~/project/.circleci/ansible/inventory.txt

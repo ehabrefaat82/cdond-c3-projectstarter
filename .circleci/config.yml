@@ -40,7 +40,7 @@ commands:
       - run:
           name: install ansible
           command: |
-            python3 -m pip install --user ansible
+            python3 -m pip install --user ansible==2.7
       - run:
           name: Install aws cli
           command: |

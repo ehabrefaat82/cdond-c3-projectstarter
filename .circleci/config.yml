@@ -258,7 +258,7 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: nikolaik/python-nodejs:python3.10-nodejs14
+      - image: cimg/python:3.10.5
     steps:
       - checkout
       - add_ssh_keys:
@@ -268,12 +268,12 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            node --version
-            npm --version
+            sudo apt -y install tar gzip
             python3 --version
             python3 -m pip -V
             python3 -m pip install --user ansible
             ansible --version
+            
             cat ~/project/.circleci/ansible/inventory.txt
       - run:
           name: deploy backend

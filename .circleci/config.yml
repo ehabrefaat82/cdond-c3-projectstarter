@@ -15,7 +15,8 @@ commands:
             echo "Destroying environment: << parameters.workflow_id >> "
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
-
+  install-prerequisites:
+    description: Install tar, gzip, ansible, and aws cli
 
 jobs:
   #-------- build phase --------
@@ -329,24 +330,30 @@ jobs:
       - image: cimg/python:3.10.5-node
     steps:
       - checkout
+#      - run:
+#          name: Install tar utility
+#          command: |
+#            sudo apt -y install tar gzip
       - run:
-          name: Install tar utility
+          name: install ansible
           command: |
-            sudo apt -y install tar gzip
-      - run:
-          name: check python, node, pip
-          command: |
-            node --version
-            npm --version
-            python3 --version
-            python3 -m pip -V
-            ansible --version
+            python3 -m pip install --user ansible
       - run:
           name: Install aws cli
           command: |
             sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             sudo unzip awscliv2.zip
             sudo ./aws/install
+      - run:
+          name: check python, node, pip, ansible and aws cli
+          command: |
+            tar --version
+            node --version
+            npm --version
+            python3 --version
+            python3 -m pip -V
+            ansible --version
+            aws --version
 
       - run:
           name: Add back-end ip to ansible inventory

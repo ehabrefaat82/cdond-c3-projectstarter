@@ -165,8 +165,8 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: [ "b6:b7:70:85:58:3d:ec:3f:a3:60:26:5c:0e:84:0b:67" ]
-#      - attach_workspace:
-#          at: ~/project/.circleci/ansible
+      - attach_workspace:
+          at: ~/project/.circleci/ansible
       - run:
           name: Install dependencies
           command: |
@@ -252,8 +252,8 @@ jobs:
             cd frontend
             npm install
             npm run build
-            tar -czvf artifact-864bbda.tar.gz dist
-            aws s3 cp dist s3://udapeople-864bbda --recursive
+            tar -czvf artifact-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       # Here's where you will add some code to rollback on failure
 
   deploy-backend:
@@ -263,8 +263,8 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: [ "b6:b7:70:85:58:3d:ec:3f:a3:60:26:5c:0e:84:0b:67" ]
-      #      - attach_workspace:
-      #          at: ~/project/.circleci/ansible
+      - attach_workspace:
+          at: ~/project/.circleci/ansible
       - run:
           name: Install dependencies
           command: |
@@ -314,7 +314,7 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            URL="http://udapeople-864bbda.s3-website-us-east-1.amazonaws.com/#/employees"            
+            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"            
             echo ${URL}
             if curl -s ${URL} | grep "Welcome"
             then
@@ -371,34 +371,41 @@ workflows:
 #      - read-from-ws:
 #          requires:
 #            - save-to-ws
-#      - build-frontend
-#      - build-backend
-#      - test-frontend:
-#          requires:
-#          - build-frontend
-#      - test-backend:
-#          requires:
-#            - build-backend
-#      - scan-frontend:
-#          requires:
-#            - build-frontend
-#      - scan-backend:
-#          requires:
-#            - build-backend
-#      - deploy-infrastructure:
-#          requires:
-#            - build-frontend
-#            - build-backend
-#            - test-frontend
-#            - test-backend
-#            - scan-frontend
-#            - scan-backend
-#      - configure-infrastructure
-#          requires:
-#            - deploy-infrastructure
-#      - run-migrations:
-#          requires:
-#            - configure-infrastructure
-#      - deploy-frontend
-#      - deploy-backend
-      - smoke-test
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires:
+          - build-frontend
+      - test-backend:
+          requires:
+            - build-backend
+      - scan-frontend:
+          requires:
+            - build-frontend
+      - scan-backend:
+          requires:
+            - build-backend
+      - deploy-infrastructure:
+          requires:
+            - build-frontend
+            - build-backend
+            - test-frontend
+            - test-backend
+            - scan-frontend
+            - scan-backend
+      - configure-infrastructure:
+          requires:
+            - deploy-infrastructure
+      - run-migrations:
+          requires:
+            - configure-infrastructure
+      - deploy-frontend:
+          requires:
+            - run-migrations
+      - deploy-backend:
+          requires:
+            - run-migrations
+      - smoke-test:
+          requires:
+            - deploy-frontend
+            - deploy-backend

@@ -21,15 +21,15 @@ commands:
       - run:
           name: update packages
           command: |
-            cat /etc/os-release
             sudo apt update
+            sudo apt -y upgrade
       - run:
           name: update python
           command: |
             sudo apt install -y software-properties-common
             sudo add-apt-repository --yes ppa:deadsnakes/ppa
             echo "---------------"
-            sudo apt install -y python3.8
+            sudo apt install -y python3.9
             echo "---------------"
             python3 --version
             ls -1 /usr/bin/python*

@@ -21,7 +21,7 @@ commands:
       - run:
           name: update packages
           command: |
-            lsb_release -a
+            cat /etc/issue
             sudo apt update
       - run:
           name: update python

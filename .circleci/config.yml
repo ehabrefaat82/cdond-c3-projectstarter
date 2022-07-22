@@ -300,7 +300,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export API_URL="http://${BACKEND_IP}:3030"
+            export API_URL="http://34.238.44.56:3030"
             echo "${API_URL}"
       - run:
           name: Backend smoke test.

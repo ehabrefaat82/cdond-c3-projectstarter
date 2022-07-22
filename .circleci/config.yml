@@ -244,12 +244,12 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/project/.circleci/ansible
       - run:
           name: Install tar utility
           command: |
             yum -y install tar gzip
+      - attach_workspace:
+          at: ~/project/.circleci/ansible
       - run:
           name: Add back-end ip to ansible inventory
           command: |

@@ -199,10 +199,10 @@ jobs:
           command: |
             cd backend
             npm install --save-dev webpack@5.73.0
+            npm run build
             npm update mkdirp --depth 2
             npm update path-parse --depth 3
             npm update kind-of --depth 10
-            npm run build
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
             npm run migrations > migrations_dump.txt
@@ -293,9 +293,9 @@ workflows:
 #            - test-backend
 #            - scan-frontend
 #            - scan-backend
-      - configure-infrastructure
+#      - configure-infrastructure
 #          requires:
 #            - deploy-infrastructure
-      - run-migrations:
-          requires:
-            - configure-infrastructure
+      - run-migrations
+#          requires:
+#            - configure-infrastructure

@@ -29,8 +29,9 @@ commands:
             sudo add-apt-repository --yes ppa:deadsnakes/ppa
             sudo apt install -y python3.9
             sudo apt-get -f install
+            echo "---------------"
             python3 --version
-            ls -1 /usr/bin/py*
+            ls -1 /usr/bin/python*
             env
       - run:
           name: install pip

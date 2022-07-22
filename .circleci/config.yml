@@ -21,8 +21,9 @@ commands:
       - run:
           name: install pip
           command: |
-            sudo apt-get install python3-setuptools
-            sudo python3 /usr/local/lib/python3.5/dist-packages/easy_install.py pip
+            sudo apt update
+            sudo apt install python3-pip
+            pip3 --version
       - run:
           name: install ansible
           command: |

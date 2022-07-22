@@ -255,7 +255,6 @@ jobs:
           command: |
             cat ~/project/.circleci/ansible/inventory.txt
             echo "------------"
-            cat workspace/inventory.txt
 workflows:
   default:
     jobs:

@@ -272,7 +272,7 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
   smoke-test:
     docker:
-      - image: alpine/curl
+      - image: cimg/python:3.10.5-node
     steps:
       - checkout
       - install-dependencies

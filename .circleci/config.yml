@@ -22,7 +22,6 @@ commands:
           name: update packages
           command: |
             sudo apt update
-            sudo apt -y upgrade
 #      - run:
 #          name: update python
 #          command: |
@@ -41,7 +40,7 @@ commands:
       - run:
           name: install ansible
           command: |
-            python3 -m pip install --user ansible:2.7
+            python3 -m pip install --user ansible=2.7
       - run:
           name: Install aws cli
           command: |

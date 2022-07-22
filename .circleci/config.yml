@@ -123,7 +123,8 @@ jobs:
             npm install
             npm audit fix --audit-level=critical --force
             npm audit fix
-            npm audit --audit-level=critical
+            npm audit
+#            npm audit --audit-level=critical
   scan-backend:
     docker:
       - image: cimg/python:3.10.5-node
@@ -139,7 +140,8 @@ jobs:
             npm install
             npm audit fix --audit-level=critical --force
             npm audit fix
-            npm audit --audit-level=critical
+            npm audit
+#            npm audit --audit-level=critical
   #-------- deploy-infra phase --------
   deploy-infrastructure:
     docker:

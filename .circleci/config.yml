@@ -149,7 +149,7 @@ jobs:
           name: Add back-end ip to ansible inventory
           command: |
             aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --query 'Reservations[*].Instances[*].PublicDnsName' \
             --filters "Name=tag:project,Values=Udapeople" \
             --output text >> ~/project/.circleci/ansible/inventory.txt
       - persist_to_workspace:
@@ -178,12 +178,15 @@ jobs:
             sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             sudo unzip awscliv2.zip
             sudo ./aws/install
+            echo "--------inventory.txt --------"
+            cat inventory.txt
 
       - run:
           name: Configure server
           command: |
-            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
+            ansible-playbook -i inventory.txt .circleci/ansible/configure-server.yml
       # Here's where you will add some code to rollback on failure
+
   #-------- migration phase --------
   # run successfully but no migration doe I don't know what is missing in steps!
   run-migrations:
@@ -195,7 +198,13 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            npm install
+            npm install --save-dev webpack@5.73.0
+            npm update mkdirp --depth 2
+            npm update path-parse --depth 3
+            npm update kind-of --depth 10
+            npm run build
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
             npm run migrations > migrations_dump.txt
       - run:
           name: Send migration results to kvdb
@@ -258,35 +267,35 @@ jobs:
 workflows:
   default:
     jobs:
-      - save-to-ws
-      - read-from-ws:
+#      - save-to-ws
+#      - read-from-ws:
+#          requires:
+#            - save-to-ws
+      - build-frontend
+      - build-backend
+      - test-frontend:
           requires:
-            - save-to-ws
-#      - build-frontend
-#      - build-backend
-#      - test-frontend:
-#          requires:
-#          - build-frontend
-#      - test-backend:
-#          requires:
-#            - build-backend
-#      - scan-frontend:
-#          requires:
-#            - build-frontend
-#      - scan-backend:
-#          requires:
-#            - build-backend
-#      - deploy-infrastructure:
-#          requires:
-#            - build-frontend
-#            - build-backend
-#            - test-frontend
-#            - test-backend
-#            - scan-frontend
-#            - scan-backend
-#      - configure-infrastructure:
-#          requires:
-#            - deploy-infrastructure
-#      - run-migrations
-#          requires:
-#            - scan-backend
+          - build-frontend
+      - test-backend:
+          requires:
+            - build-backend
+      - scan-frontend:
+          requires:
+            - build-frontend
+      - scan-backend:
+          requires:
+            - build-backend
+      - deploy-infrastructure:
+          requires:
+            - build-frontend
+            - build-backend
+            - test-frontend
+            - test-backend
+            - scan-frontend
+            - scan-backend
+      - configure-infrastructure:
+          requires:
+            - deploy-infrastructure
+      - run-migrations:
+          requires:
+            - configure-infrastructure

@@ -1,6 +1,6 @@
 - name: "copy file"
   copy:
-    src: ~/artifact.tar.gz
+    src: ~/project/artifact.tar.gz
     dest: ~/
     backup: yes
 - name: "extract file"

@@ -23,31 +23,31 @@ commands:
           command: |
             sudo apt update
             sudo apt -y upgrade
-      - run:
-          name: update python
-          command: |
-            sudo apt install -y software-properties-common
-            sudo add-apt-repository --yes ppa:deadsnakes/ppa
-            echo "---------------"
-            sudo apt install -y python3.9
-            echo "---------------"
-            python3 --version
-            ls -1 /usr/bin/python*
-            env
+#      - run:
+#          name: update python
+#          command: |
+#            sudo apt install -y software-properties-common
+#            sudo add-apt-repository --yes ppa:deadsnakes/ppa
+#            echo "---------------"
+#            sudo apt install -y python3.9
+#            echo "---------------"
+#            python3 --version
+#            ls -1 /usr/bin/python*
+#            env
       - run:
           name: install pip
           command: |
             sudo apt install python3-pip
-#      - run:
-#          name: install ansible
-#          command: |
-#            python3 -m pip install --user ansible
-#      - run:
-#          name: Install aws cli
-#          command: |
-#            sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-#            sudo unzip awscliv2.zip
-#            sudo ./aws/install
+      - run:
+          name: install ansible
+          command: |
+            python3 -m pip install --user ansible:2.7
+      - run:
+          name: Install aws cli
+          command: |
+            sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            sudo unzip awscliv2.zip
+            sudo ./aws/install
       - run:
           name: check python, node, pip, ansible and aws cli
           command: |

@@ -237,6 +237,7 @@ jobs:
           command: |
             yum install -y curl
             curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+            export NVM_DIR="$HOME/.nvm"
             nvm –version
             nvm install node
             node –version

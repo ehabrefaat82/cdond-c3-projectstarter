@@ -278,8 +278,9 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export API_URL="http://${CIRCLE_WORKFLOW_ID:0:7}:3030"
-            echo "${API_URL}"
+            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=Udapeople" --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
               return 0
@@ -301,41 +302,42 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires:
-          - build-frontend
-      - test-backend:
-          requires:
-            - build-backend
-      - scan-frontend:
-          requires:
-            - build-frontend
-      - scan-backend:
-          requires:
-            - build-backend
-      - deploy-infrastructure:
-          requires:
-            - build-frontend
-            - build-backend
-            - test-frontend
-            - test-backend
-            - scan-frontend
-            - scan-backend
-      - configure-infrastructure:
-          requires:
-            - deploy-infrastructure
-      - run-migrations:
-          requires:
-            - configure-infrastructure
-      - deploy-frontend:
-          requires:
-            - run-migrations
-      - deploy-backend:
-          requires:
-            - run-migrations
-      - smoke-test:
-          requires:
-            - deploy-frontend
-            - deploy-backend
+      - smoke-test
+#      - build-frontend
+#      - build-backend
+#      - test-frontend:
+#          requires:
+#          - build-frontend
+#      - test-backend:
+#          requires:
+#            - build-backend
+#      - scan-frontend:
+#          requires:
+#            - build-frontend
+#      - scan-backend:
+#          requires:
+#            - build-backend
+#      - deploy-infrastructure:
+#          requires:
+#            - build-frontend
+#            - build-backend
+#            - test-frontend
+#            - test-backend
+#            - scan-frontend
+#            - scan-backend
+#      - configure-infrastructure:
+#          requires:
+#            - deploy-infrastructure
+#      - run-migrations:
+#          requires:
+#            - configure-infrastructure
+#      - deploy-frontend:
+#          requires:
+#            - run-migrations
+#      - deploy-backend:
+#          requires:
+#            - run-migrations
+#      - smoke-test:
+#          requires:
+#            - deploy-frontend
+#            - deploy-backend

@@ -227,7 +227,7 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:project,Values=Udapeople" \
             --output text >> ~/project/.circleci/ansible/inventory.txt
-      -run:
+      - run:
           name: view file content
           command: |
             cat ~/project/.circleci/ansible/inventory.txt

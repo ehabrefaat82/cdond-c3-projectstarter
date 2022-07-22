@@ -275,6 +275,7 @@ jobs:
       - image: alpine/curl
     steps:
       - checkout
+      - install-dependencies
       - run:
           name: Frontend smoke test.
           command: |

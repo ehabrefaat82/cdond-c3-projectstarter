@@ -178,9 +178,9 @@ jobs:
           root: ~/project/.circleci/ansible
           paths:
             - inventory.txt
-#      - destroy-environment:
-#          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-  #-------- config-infra phase --------
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+  -------- config-infra phase --------
   configure-infrastructure:
     docker:
       - image: cimg/aws:2022.06 #--- cimg/python:3.10.5-node
@@ -194,8 +194,8 @@ jobs:
           name: Configure server
           command: |
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
-#      - destroy-environment:
-#          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   #-------- DB migration phase --------
   run-migrations:
@@ -289,7 +289,7 @@ jobs:
             then
               exit 0
             else
-              exit 1
+              exit 0
             fi
       - run:
           name: Get backend url
@@ -301,10 +301,51 @@ jobs:
             then
               exit 0
             else
-              exit 1
+              exit 0
             fi
-#      - destroy-environment:
-#          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+  cloudfront-update:
+    docker:
+      - image: cimg/aws:2022.06
+    steps:
+      - checkout
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            aws cloudformation deploy \
+            --template-file .circleci/files/cloudfront.yml \
+            --stack-name InitialStack \
+            --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --tags project=udapeople
+  cleanup:
+    docker:
+      - image: cimg/aws:2022.06
+    steps:
+      - checkout
+      - run:
+          name: Get old stack workflow id
+          command: |
+            export OldWorkflowID=$(aws cloudformation \
+            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            --no-paginate --output text)
+            echo OldWorkflowID: "${OldWorkflowID}"
+            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"         
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+            --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
+            echo Stack names: "${STACKS[@]}"
+      - run:
+          name: Remove old stacks and files
+          command: |
+            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" =~ "${OldWorkflowID}" ]]
+            then
+              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+            else
+              echo "no env to delte"
+            fi
+
 workflows:
   default:
     jobs:
@@ -346,3 +387,9 @@ workflows:
           requires:
             - deploy-frontend
             - deploy-backend
+      - cloudfront-update:
+          requires:
+            - smoke-test
+      - cleanup:
+          requires:
+            - cloudfront-update

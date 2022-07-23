@@ -311,6 +311,16 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Get old workflow id before gone
+          command: |
+            aws cloudformation \
+            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            --no-paginate --output text >> ~/project/.circleci/oldWorkflowID.txt
+      - persist_to_workspace:
+          root: ~/project/.circleci/
+          paths:
+            - oldWorkflowID.txt
+      - run:
           name: Update cloudfront distribution
           command: |
             aws cloudformation deploy \
@@ -323,12 +333,12 @@ jobs:
       - image: cimg/aws:2022.06
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/project/.circleci
       - run:
           name: Get old stack workflow id
           command: |
-            export OldWorkflowID=$(aws cloudformation \
-            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            --no-paginate --output text)
+            export OldWorkflowID=$(cat oldWorkflowID.txt)
             echo OldWorkflowID: "${OldWorkflowID}"
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"         
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
@@ -343,7 +353,7 @@ jobs:
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
             else
-              echo "no env to delte"
+              echo "no env to delete"
             fi
 
 workflows:

@@ -174,6 +174,8 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicDnsName' \
             --filters "Name=tag:project,Values=Udapeople" \
             --output text >> ~/project/.circleci/ansible/inventory.txt
+            echo "---- cat inventory.txt"
+            cat ~/project/.circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/project/.circleci/ansible
           paths:
@@ -193,6 +195,8 @@ jobs:
       - run:
           name: Configure server
           command: |
+            echo "---- inventory.txt content "
+            cat ~/project/.circleci/ansible/inventory.txt
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
@@ -263,6 +267,8 @@ jobs:
       - run:
           name: deploy backend
           command: |
+            echo "---- cat inventory.txt"
+            cat ~/project/.circleci/ansible/inventory.txt
             cd backend
             npm i
             npm run build
@@ -349,9 +355,9 @@ jobs:
           command: |
             if [[ "${CIRCLE_WORKFLOW_ID:0:7}" =~ "${OldWorkflowID}" ]]
             then
-              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
-              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
-              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive --debug
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}" --debug
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}" --debug
             else
               echo "no env to delete"
             fi

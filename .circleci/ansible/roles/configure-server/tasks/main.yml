@@ -1,3 +1,12 @@
+- name: "install node, npm and pm2"
+  become: yws
+  shell: |
+    sudo dpkg --configure -a
+    sudo apt update
+    sudo apt install -y nodejs
+    sudo apt install -y npm
+    sudo npm install pm2@latest -g
+
 #- name: "update apt packages."
 #  become: yes
 #  apt:
@@ -12,18 +21,18 @@
 #  become: yes
 #  apt:
 #    autoremove: yes
-
-- name: "install nodejs, npm."
-  become: yes
-  apt:
-    name: ["nodejs", "npm"]
-    state: latest
-#    update_cache: yes
-
-- name: "install pm2"
-  become: yes
-  npm:
-    name: pm2
-    global: yes
-    production: yes
-    state: present
+#
+#- name: "install nodejs, npm."
+#  become: yes
+#  apt:
+#    name: ["nodejs", "npm"]
+#    state: latest
+##    update_cache: yes
+#
+#- name: "install pm2"
+#  become: yes
+#  npm:
+#    name: pm2
+#    global: yes
+#    production: yes
+#    state: present

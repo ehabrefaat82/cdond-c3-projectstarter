@@ -1,5 +1,5 @@
 - name: "install node, npm and pm2"
-  become: yws
+  become: yes
   shell: |
     sudo dpkg --configure -a
     sudo apt update

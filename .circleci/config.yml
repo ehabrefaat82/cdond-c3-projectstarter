@@ -356,17 +356,17 @@ jobs:
               echo "no env to delete"
             fi
 
-    get-workflow-id:
-      docker:
-        - image: cimg/aws:2022.06
-      steps:
-        - checkout
-        - run:
-            name: Get old workflow id before gone
-            command: |
-              aws cloudformation \
-              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-              --no-paginate --output text
+  g23:
+    docker:
+      - image: cimg/aws:2022.06
+    steps:
+      - checkout
+      - run:
+          name: Get old workflow id before gone
+          command: |
+            aws cloudformation \
+            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            --no-paginate --output text
   #      - persist_to_workspace:
   #          root: ~/project/.circleci/
   #          paths:
@@ -374,7 +374,7 @@ jobs:
 workflows:
   default:
     jobs:
-      - get-workflow-id
+      - g23
 #      - build-frontend
 #      - build-backend
 #      - test-frontend:

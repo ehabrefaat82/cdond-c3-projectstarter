@@ -356,82 +356,98 @@ jobs:
               echo "no env to delete"
             fi
 
+    get-workflow-id:
+      docker:
+        - image: cimg/aws:2022.06
+      steps:
+        - checkout
+        - run:
+            name: Get old workflow id before gone
+            command: |
+              aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text
+  #      - persist_to_workspace:
+  #          root: ~/project/.circleci/
+  #          paths:
+  #            - oldWorkflowID.txt
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires:
-          - build-frontend
-      - test-backend:
-          requires:
-            - build-backend
-      - scan-frontend:
-          requires:
-            - build-frontend
-      - scan-backend:
-          requires:
-            - build-backend
-      - deploy-infrastructure:
-          requires:
-            - build-frontend
-            - build-backend
-            - test-frontend
-            - test-backend
-            - scan-frontend
-            - scan-backend
-          filters:
-            branches:
-              only:
-                - master
-      - configure-infrastructure:
-          requires:
-            - deploy-infrastructure
-          filters:
-            branches:
-              only:
-                - master
-      - run-migrations:
-          requires:
-            - configure-infrastructure
-          filters:
-            branches:
-              only:
-                - master
-      - deploy-frontend:
-          requires:
-            - run-migrations
-          filters:
-            branches:
-              only:
-                - master
-      - deploy-backend:
-          requires:
-            - run-migrations
-          filters:
-            branches:
-              only:
-                - master
-      - smoke-test:
-          requires:
-            - deploy-frontend
-            - deploy-backend
-          filters:
-            branches:
-              only:
-                - master
-      - cloudfront-update:
-          requires:
-            - smoke-test
-          filters:
-            branches:
-              only:
-                - master
-      - cleanup:
-          requires:
-            - cloudfront-update
-          filters:
-            branches:
-              only:
-                - master
+      - get-workflow-id
+#      - build-frontend
+#      - build-backend
+#      - test-frontend:
+#          requires:
+#          - build-frontend
+#      - test-backend:
+#          requires:
+#            - build-backend
+#      - scan-frontend:
+#          requires:
+#            - build-frontend
+#      - scan-backend:
+#          requires:
+#            - build-backend
+#      - deploy-infrastructure:
+#          requires:
+#            - build-frontend
+#            - build-backend
+#            - test-frontend
+#            - test-backend
+#            - scan-frontend
+#            - scan-backend
+#          filters:
+#            branches:
+#              only:
+#                - master
+#      - configure-infrastructure:
+#          requires:
+#            - deploy-infrastructure
+#          filters:
+#            branches:
+#              only:
+#                - master
+#      - run-migrations:
+#          requires:
+#            - configure-infrastructure
+#          filters:
+#            branches:
+#              only:
+#                - master
+#      - deploy-frontend:
+#          requires:
+#            - run-migrations
+#          filters:
+#            branches:
+#              only:
+#                - master
+#      - deploy-backend:
+#          requires:
+#            - run-migrations
+#          filters:
+#            branches:
+#              only:
+#                - master
+#      - smoke-test:
+#          requires:
+#            - deploy-frontend
+#            - deploy-backend
+#          filters:
+#            branches:
+#              only:
+#                - master
+#      - cloudfront-update:
+#          requires:
+#            - smoke-test
+#          filters:
+#            branches:
+#              only:
+#                - master
+#      - cleanup:
+#          requires:
+#            - cloudfront-update
+#          filters:
+#            branches:
+#              only:
+#                - master

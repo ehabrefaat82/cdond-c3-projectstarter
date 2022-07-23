@@ -148,10 +148,9 @@ jobs:
   #-------- deploy-infra phase --------
   deploy-infrastructure:
     docker:
-      - image: circleci/node:13.8.0 #--- cimg/python:3.10.5-node
+      - image: cimg/aws:2022.06 #--- cimg/python:3.10.5-node
     steps:
       - checkout
-      - install-dependencies
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -189,8 +188,8 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: [ "b6:b7:70:85:58:3d:ec:3f:a3:60:26:5c:0e:84:0b:67" ]
-#      - attach_workspace:
-#          at: ~/project/.circleci/ansible
+      - attach_workspace:
+          at: ~/project/.circleci/ansible
       - run:
           name: Configure server
           command: |
@@ -259,8 +258,8 @@ jobs:
       - install-dependencies
       - add_ssh_keys:
           fingerprints: [ "b6:b7:70:85:58:3d:ec:3f:a3:60:26:5c:0e:84:0b:67" ]
-#      - attach_workspace:
-#          at: ~/project/.circleci/ansible
+      - attach_workspace:
+          at: ~/project/.circleci/ansible
       - run:
           name: deploy backend
           command: |
@@ -281,7 +280,6 @@ jobs:
       - image: circleci/node:13.8.0 #--- cimg/python:3.10.5-node
     steps:
       - checkout
-      - install-dependencies
       - run:
           name: Frontend smoke test.
           command: |
@@ -310,42 +308,41 @@ jobs:
 workflows:
   default:
     jobs:
-      - configure-infrastructure
-#      - build-frontend
-#      - build-backend
-#      - test-frontend:
-#          requires:
-#          - build-frontend
-#      - test-backend:
-#          requires:
-#            - build-backend
-#      - scan-frontend:
-#          requires:
-#            - build-frontend
-#      - scan-backend:
-#          requires:
-#            - build-backend
-#      - deploy-infrastructure:
-#          requires:
-#            - build-frontend
-#            - build-backend
-#            - test-frontend
-#            - test-backend
-#            - scan-frontend
-#            - scan-backend
-#      - configure-infrastructure:
-#          requires:
-#            - deploy-infrastructure
-#      - run-migrations:
-#          requires:
-#            - configure-infrastructure
-#      - deploy-frontend:
-#          requires:
-#            - run-migrations
-#      - deploy-backend:
-#          requires:
-#            - run-migrations
-#      - smoke-test:
-#          requires:
-#            - deploy-frontend
-#            - deploy-backend
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires:
+          - build-frontend
+      - test-backend:
+          requires:
+            - build-backend
+      - scan-frontend:
+          requires:
+            - build-frontend
+      - scan-backend:
+          requires:
+            - build-backend
+      - deploy-infrastructure:
+          requires:
+            - build-frontend
+            - build-backend
+            - test-frontend
+            - test-backend
+            - scan-frontend
+            - scan-backend
+      - configure-infrastructure:
+          requires:
+            - deploy-infrastructure
+      - run-migrations:
+          requires:
+            - configure-infrastructure
+      - deploy-frontend:
+          requires:
+            - run-migrations
+      - deploy-backend:
+          requires:
+            - run-migrations
+      - smoke-test:
+          requires:
+            - deploy-frontend
+            - deploy-backend

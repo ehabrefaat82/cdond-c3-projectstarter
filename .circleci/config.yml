@@ -185,9 +185,10 @@ jobs:
   #-------- config-infra phase --------
   configure-infrastructure:
     docker:
-      - image: cimg/aws:2022.06 #--- cimg/python:3.10.5-node
+      - image: circleci/node:13.8.0 #--- cimg/python:3.10.5-node
     steps:
       - checkout
+      - install-dependencies
       - add_ssh_keys:
           fingerprints: [ "b6:b7:70:85:58:3d:ec:3f:a3:60:26:5c:0e:84:0b:67" ]
       - attach_workspace:

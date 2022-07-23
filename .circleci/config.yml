@@ -372,10 +372,26 @@ jobs:
           root: ~/project/.circleci/
           paths:
             - oldWorkflowID.txt
+  g24:
+    docker:
+      - image: cimg/aws:2022.06
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project/.circleci
+      - run:
+          name: Get old stack workflow id
+          command: |
+            export OldWorkflowID=$(cat ~/project/.circleci/oldWorkflowID.txt)
+            echo "------"
+            echo OldWorkflowID: "${OldWorkflowID}"
 workflows:
   default:
     jobs:
       - g23
+      - g24:
+          requires:
+            - g23
 #      - build-frontend
 #      - build-backend
 #      - test-frontend:

@@ -171,7 +171,7 @@ jobs:
           name: Add back-end ip to ansible inventory
           command: |
             aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].PublicDnsName' \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:project,Values=Udapeople" \
             --output text >> ~/project/.circleci/ansible/inventory.txt
             echo "---- cat inventory.txt"
@@ -215,7 +215,11 @@ jobs:
           name: Run migrations
           command: |
             cd backend
+            echo "--- pwd ---"
+            pwd
+            echo "--- npm install ---"
             npm install
+            echo "--- npm run migrations > migrations_dump.txt ---"
             npm run migrations > migrations_dump.txt
       - run:
           name: Send migration results to kvdb
@@ -247,7 +251,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicDnsName' --filters "Name=tag:project,Values=Udapeople" --output text)
+            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=Udapeople" --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
@@ -280,16 +284,24 @@ jobs:
             echo "---- cat inventory.txt"
             cat ~/project/.circleci/ansible/inventory.txt
             cd backend
-            npm i
+            echo "--- pwd ---"
+            pwd
+            echo "--- ---"
+            npm install
+            echo "--- npm run build ---"
             npm run build
+            echo "--- cd .. ---"
             cd ..
             # Zip the directory
+            echo "--- pwd ---"
             pwd
+            echo "--- tar -C backend -czvf artifact.tar.gz . ---"
             tar -C backend -czvf artifact.tar.gz .
             ls
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
+            echo "--- ---"
             ansible-playbook -i inventory.txt deploy-backend.yml
   smoke-test:
     docker:
@@ -310,7 +322,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicDnsName' --filters "Name=tag:project,Values=Udapeople" --output text)
+            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=Udapeople" --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"

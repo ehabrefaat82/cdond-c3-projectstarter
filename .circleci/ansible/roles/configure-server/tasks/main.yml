@@ -3,18 +3,18 @@
   shell: |
     echo "---- apt update ----"
     sudo apt update
-  register: update-server
-- debug: msg= "{{ update-server.stdout }}"
-- debug: msg= "{{ update-server.stderr }}"
+  register: updateserver
+- debug: msg= "{{ updateserver.stdout }}"
+- debug: msg= "{{ updateserver.stderr }}"
 
 - name: "install python3-zunclient"
   become: yes
   shell: |
     echo "---- apt install -y python3-zunclient ----"
     sudo apt install -y python3-zunclient
-  register: python3-zunclient
-- debug: msg= "{{ python3-zunclient.stdout }}"
-- debug: msg= "{{ python3-zunclient.stderr }}"
+  register: python3zunclient
+- debug: msg= "{{ python3zunclient.stdout }}"
+- debug: msg= "{{ python3zunclient.stderr }}"
 
 - name: "install node, npm and pm2"
   become: yes
@@ -25,9 +25,9 @@
     sudo apt install -y npm
     echo "---- npm install pm2@latest -g ----"
     sudo npm install pm2@latest -g
-  register: node-npm-pm2
-- debug: msg= "{{ node-npm-pm2.stdout }}"
-- debug: msg= "{{ node-npm-pm2.stderr }}"
+  register: nodenpmpm2
+- debug: msg= "{{ nodenpmpm2.stdout }}"
+- debug: msg= "{{ nodenpmpm2.stderr }}"
 
 - name: "env-variables"
   become: yes
@@ -44,10 +44,10 @@
     export TYPEORM_PASSWORD=postgres 
     export TYPEORM_DATABASE=postgres
     env
-  register: env-variables
+  register: envvariables
 
-- debug: msg="{{ env-variables.stdout }}"
-- debug: msg="{{ env-variables.stderr }}"
+- debug: msg="{{ envvariables.stdout }}"
+- debug: msg="{{ envvariables.stderr }}"
 #- name: "update apt packages."
 #  become: yes
 #  apt:

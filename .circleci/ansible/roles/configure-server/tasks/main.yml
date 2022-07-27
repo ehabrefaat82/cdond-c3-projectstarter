@@ -15,13 +15,13 @@
     sudo apt install -y npm
     echo "---- npm install pm2@latest -g ----"
     sudo npm install pm2@latest -g
-    echo "---- hostname: {{inventory_hostname}} ----"
+    echo "---- DB hostname: 54.166.18.127 ----"
     echo "---- env variables ----"
     export TYPEORM_CONNECTION=postgres 
     export TYPEORM_MIGRATIONS_DIR=./src/migrations 
     export TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts 
     export TYPEORM_MIGRATIONS=./src/migrations/*.ts 
-    export TYPEORM_HOST={{inventory_hostname}} 
+    export TYPEORM_HOST=54.166.18.127
     export TYPEORM_PORT=5432 
     export TYPEORM_USERNAME=postgres 
     export TYPEORM_PASSWORD=postgres 

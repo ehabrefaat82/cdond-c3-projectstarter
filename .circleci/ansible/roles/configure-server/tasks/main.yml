@@ -5,8 +5,8 @@
     sudo dpkg --configure -a
     echo "---- apt update ----"
     sudo apt update
-    echo "---- apt upgrade ----"
-    sudo apt upgrade
+#    echo "---- apt upgrade ----"
+#    sudo apt upgrade
     echo "---- apt install -y python3-zunclient ----"
     sudo apt install -y python3-zunclient
     echo "---- apt install -y nodejs ----"
@@ -27,6 +27,10 @@
     export TYPEORM_PASSWORD=postgres 
     export TYPEORM_DATABASE=postgres
     env
+  register: serverconf
+
+- debug: msg="{{ serverconf.stdout }}"
+- debug: msg="{{ serverconf.stderr }}"
 #- name: "update apt packages."
 #  become: yes
 #  apt:

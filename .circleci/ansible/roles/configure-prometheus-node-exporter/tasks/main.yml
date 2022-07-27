@@ -26,6 +26,9 @@
     src: https://github.com/prometheus/node_exporter/releases/download/v0.17.0/node_exporter-0.17.0.linux-amd64.tar.gz
     dest: /tmp
     remote_src: yes
+  register: install-exporter
+- debug: msg="{{ install-exporter.stdout }}"
+- debug: msg="{{ install-exporter.stderr }}"
 
 - name: "move binary to /usr/local/bin."
   become: true
@@ -34,12 +37,18 @@
     dest: /usr/local/bin/node_exporter
     remote_src: yes
     mode: '0777'
+  register: move-binaries
+- debug: msg="{{ move-binaries.stdout }}"
+- debug: msg="{{ move-binaries.stderr }}"
 
 - name: "add node exporter configuration."
   become: true
   copy:
     src: node_exporter.service
     dest: /etc/systemd/system/
+  register: node-conf
+- debug: msg="{{ node-conf.stdout }}"
+- debug: msg="{{ node-conf.stderr }}"
 
 - name: "enable node_exporter service"
   become: true
@@ -48,3 +57,6 @@
     daemon_reload: yes
     name: node_exporter
     enabled: yes
+  register: node-service
+- debug: msg="{{ node-service.stdout }}"
+- debug: msg="{{ node-service.stderr }}"

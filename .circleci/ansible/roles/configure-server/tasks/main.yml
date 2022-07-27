@@ -1,20 +1,41 @@
-- name: "install node, npm and pm2"
+- name: "update server"
   become: yes
   shell: |
     echo "---- dpkg --configure -a ----"
     sudo dpkg --configure -a
     echo "---- apt update ----"
     sudo apt update
-#    echo "---- apt upgrade ----"
-#    sudo apt upgrade
+    echo "---- apt upgrade ----"
+    sudo apt upgrade
+  register: update-server
+- debug: msg= "{{ update-server.stdout }}"
+- debug: msg= "{{ update-server.stderr }}"
+
+- name: "install python3-zunclient"
+  become: yes
+  shell: |
     echo "---- apt install -y python3-zunclient ----"
     sudo apt install -y python3-zunclient
+  register: python3-zunclient
+- debug: msg= "{{ python3-zunclient.stdout }}"
+- debug: msg= "{{ python3-zunclient.stderr }}"
+
+- name: "install node, npm and pm2"
+  become: yes
+  shell: |
     echo "---- apt install -y nodejs ----"
     sudo apt install -y nodejs
     echo "---- apt install -y npm ----"
     sudo apt install -y npm
     echo "---- npm install pm2@latest -g ----"
     sudo npm install pm2@latest -g
+  register: node-npm-pm2
+- debug: msg= "{{ node-npm-pm2.stdout }}"
+- debug: msg= "{{ node-npm-pm2.stderr }}"
+
+- name: "env-variables"
+  become: yes
+  shell: |
     echo "---- DB hostname: 54.166.18.127 ----"
     echo "---- env variables ----"
     export TYPEORM_CONNECTION=postgres 
@@ -27,10 +48,10 @@
     export TYPEORM_PASSWORD=postgres 
     export TYPEORM_DATABASE=postgres
     env
-  register: serverconf
+  register: env-variables
 
-- debug: msg="{{ serverconf.stdout }}"
-- debug: msg="{{ serverconf.stderr }}"
+- debug: msg="{{ env-variables.stdout }}"
+- debug: msg="{{ env-variables.stderr }}"
 #- name: "update apt packages."
 #  become: yes
 #  apt:

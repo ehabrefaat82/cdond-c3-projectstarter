@@ -1,62 +1,62 @@
-#- name: "install node exporter."
-#  become: true
-#  shell: |
-#    sudo useradd --no-create-home node_exporter
-#    wget https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
-#    tar xzf node_exporter-1.0.1.linux-amd64.tar.gz
-#    sudo cp node_exporter-1.0.1.linux-amd64/node_exporter /usr/local/bin/node_exporter
-#    rm -rf node_exporter-1.0.1.linux-amd64.tar.gz node_exporter-1.0.1.linux-amd64
-#
-#- name: "add node exporter configuration."
-#  become: true
-#  copy:
-#    src: node_exporter.service
-#    dest: /etc/systemd/system/
-#
-#- name: "enable node_exporter service"
-#  become: true
-#  shell: |
-#    sudo systemctl daemon-reload
-#    sudo systemctl enable node-exporter
-#    sudo systemctl start node-exporter
-#    sudo systemctl status node-exporter
-
 - name: "install node exporter."
-  unarchive:
-    src: https://github.com/prometheus/node_exporter/releases/download/v0.17.0/node_exporter-0.17.0.linux-amd64.tar.gz
-    dest: /tmp
-    remote_src: yes
-  register: installexporter
-- debug: msg="{{ installexporter.stdout }}"
-- debug: msg="{{ installexporter.stderr }}"
-
-- name: "move binary to /usr/local/bin."
   become: true
-  copy:
-    src: /tmp/node_exporter-0.17.0.linux-amd64/node_exporter
-    dest: /usr/local/bin/node_exporter
-    remote_src: yes
-    mode: '0777'
-  register: move-binaries
-- debug: msg="{{ movebinaries.stdout }}"
-- debug: msg="{{ movebinaries.stderr }}"
+  shell: |
+    sudo useradd --no-create-home node_exporter
+    wget https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
+    tar xzf node_exporter-1.0.1.linux-amd64.tar.gz
+    sudo cp node_exporter-1.0.1.linux-amd64/node_exporter /usr/local/bin/node_exporter
+    rm -rf node_exporter-1.0.1.linux-amd64.tar.gz node_exporter-1.0.1.linux-amd64
 
 - name: "add node exporter configuration."
   become: true
   copy:
     src: node_exporter.service
     dest: /etc/systemd/system/
-  register: nodeconf
-- debug: msg="{{ nodeconf.stdout }}"
-- debug: msg="{{ nodeconf.stderr }}"
 
 - name: "enable node_exporter service"
   become: true
-  systemd:
-    state: restarted
-    daemon_reload: yes
-    name: node_exporter
-    enabled: yes
-  register: nodeservice
-- debug: msg="{{ nodeservice.stdout }}"
-- debug: msg="{{ nodeservice.stderr }}"
+  shell: |
+    sudo systemctl daemon-reload
+    sudo systemctl enable node-exporter
+    sudo systemctl start node-exporter
+    sudo systemctl status node-exporter
+
+#- name: "install node exporter."
+#  unarchive:
+#    src: https://github.com/prometheus/node_exporter/releases/download/v0.17.0/node_exporter-0.17.0.linux-amd64.tar.gz
+#    dest: /tmp
+#    remote_src: yes
+#  register: installexporter
+#- debug: msg="{{ installexporter.stdout }}"
+#- debug: msg="{{ installexporter.stderr }}"
+#
+#- name: "move binary to /usr/local/bin."
+#  become: true
+#  copy:
+#    src: /tmp/node_exporter-0.17.0.linux-amd64/node_exporter
+#    dest: /usr/local/bin/node_exporter
+#    remote_src: yes
+#    mode: '0777'
+#  register: move-binaries
+#- debug: msg="{{ movebinaries.stdout }}"
+#- debug: msg="{{ movebinaries.stderr }}"
+#
+#- name: "add node exporter configuration."
+#  become: true
+#  copy:
+#    src: node_exporter.service
+#    dest: /etc/systemd/system/
+#  register: nodeconf
+#- debug: msg="{{ nodeconf.stdout }}"
+#- debug: msg="{{ nodeconf.stderr }}"
+#
+#- name: "enable node_exporter service"
+#  become: true
+#  systemd:
+#    state: restarted
+#    daemon_reload: yes
+#    name: node_exporter
+#    enabled: yes
+#  register: nodeservice
+#- debug: msg="{{ nodeservice.stdout }}"
+#- debug: msg="{{ nodeservice.stderr }}"

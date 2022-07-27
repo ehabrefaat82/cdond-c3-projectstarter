@@ -1,12 +1,8 @@
 - name: "update server"
   become: yes
   shell: |
-    echo "---- dpkg --configure -a ----"
-    sudo dpkg --configure -a
     echo "---- apt update ----"
     sudo apt update
-    echo "---- apt upgrade ----"
-    sudo apt upgrade
   register: update-server
 - debug: msg= "{{ update-server.stdout }}"
 - debug: msg= "{{ update-server.stderr }}"

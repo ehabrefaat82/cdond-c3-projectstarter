@@ -16,10 +16,11 @@
 - name: "enable node_exporter service"
   become: true
   shell: |
-    sudo systemctl daemon-reload
-    sudo systemctl enable node-exporter
-    sudo systemctl start node-exporter
-    sudo systemctl status node-exporter
+    ls /etc/systemd/system/
+#    sudo systemctl daemon-reload
+#    sudo systemctl enable node-exporter
+#    sudo systemctl start node-exporter
+#    sudo systemctl status node-exporter
 
 #- name: "install node exporter."
 #  unarchive:

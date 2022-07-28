@@ -1,18 +1,51 @@
-- name: "copy file"
-  copy:
-    src: ~/project/artifact.tar.gz
-    dest: ~/
-    backup: yes
-- name: "extract file"
-  become: yes
-  shell: |
-    tar -xvzf artifact.tar.gz 
+#- name: "copy file"
+#  copy:
+#    src: ~/project/artifact.tar.gz
+#    dest: ~/
+#    backup: yes
+#- name: "extract file"
+#  become: yes
+#  shell: |
+#    tar -xvzf artifact.tar.gz
+#
+#- name: "run backend"
+#  become: yes
+#  shell: |
+#    ls
+#    npm install
+#    npm run build
+#    pm2 stop default
+#    pm2 start npm -- start
 
-- name: "run backend"
+- name: "update and install"
   become: yes
   shell: |
-    ls
+    sudo apt update
+    sudo apt-get update && sudo apt-get -y upgrade
+    sudo apt install -y python3-zunclient
+    sudo apt install -y nodejs
+    sudo apt install -y npm
+    sudo npm install pm2@latest -g
+
+- name: "export to env"
+  become: yes
+  shell: |
+    export TYPEORM_CONNECTION=postgres
+    export TYPEORM_MIGRATIONS_DIR=./src/migrations
+    export TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts
+    export TYPEORM_MIGRATIONS=./src/migrations/*.ts
+    export TYPEORM_HOST=50.19.29.112
+    export TYPEORM_PORT=5432
+    export TYPEORM_USERNAME=postgres
+    export TYPEORM_PASSWORD=postgres
+    export TYPEORM_DATABASE=postgres
+
+- name: "run app"
+  become: yes
+  shell: |
+    git clone https://github.com/ehabrefaat82/cdond-c3-projectstarter.git
+    cd cdond-c3-projectstarter/backend
     npm install
     npm run build
-    pm2 stop default
+    npm audit fix --audit-level=critical --force
     pm2 start npm -- start

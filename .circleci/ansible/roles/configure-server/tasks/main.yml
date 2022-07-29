@@ -1,4 +1,4 @@
-- name: install dependencies
+- name: "install dependencies"
   become: yes
   user: ubuntu
   shell: |

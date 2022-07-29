@@ -346,7 +346,10 @@ jobs:
 #            echo "Contents  of the inventory.txt file is -------"
 #            cat inventory.txt
 #            echo "--- ---"
-
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      - revert-migrations:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
   smoke-test:
     docker:
       - image: circleci/node:13.8.0 #--- cimg/python:3.10.5-node

@@ -26,6 +26,7 @@ commands:
           when: on_fail
           command: |
             SUCCESS = $(curl --insecure https://kvdb.io/5QkEDmw6S9aSQMQpWgQJ6f/migration_${CIRCLE_WORKFLOW_ID:0:7})
+            SUCCESS = 1
             if(( $SUCCESS==1 )); 
             then
               cd ~/project/backend
@@ -274,7 +275,7 @@ jobs:
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=Udapeople" --output text)
             export API_URL="http://${BACKEND_IP}:3030"
-            echo "API_URL = ${API_URL}"
+            echo "API_URL = ${TYPEORM_HOST}"
             echo API_URL="http://${TYPEORM_HOST}:3030" >> frontend/.env
             cat frontend/.env
       - run:
@@ -352,7 +353,7 @@ jobs:
             echo ${URL}
             if curl -s ${URL} | grep "Welcome"
             then
-              exit 0
+              exit 1
             else
               exit 0
             fi
@@ -364,11 +365,13 @@ jobs:
             echo "API_URL = ${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
-              exit 0
+              exit 1
             else
               exit 0
             fi
       - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      - revert-migrations:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
   cloudfront-update:
     docker:

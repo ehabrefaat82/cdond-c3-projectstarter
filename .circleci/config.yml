@@ -202,7 +202,7 @@ jobs:
   #-------- config-infra phase --------
   configure-infrastructure:
     docker:
-      - image: ansible/ansible
+      - image: ansible/ansible:default
 #      - image: circleci/node:13.8.0 #--- cimg/python:3.10.5-node
     steps:
       - checkout
@@ -299,7 +299,7 @@ jobs:
   #-------- deploy-backend phase --------
   deploy-backend:
     docker:
-      - image: ansible/ansible  #--- circleci/node:13.8.0 cimg/python:3.10.5-node
+      - image: ansible/ansible:default  #--- circleci/node:13.8.0 cimg/python:3.10.5-node
     environment:
       ENVIRONMENT: production
       TYPEORM_ENTITIES: "{{ lookup('env', 'TYPEORM_ENTITIES')}}"

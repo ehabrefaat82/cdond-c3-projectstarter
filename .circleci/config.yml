@@ -276,7 +276,7 @@ jobs:
             export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=Udapeople" --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${TYPEORM_HOST}"
-            echo API_URL="http://${TYPEORM_HOST}:3030" >> frontend/.env
+            echo API_URL="http://54.88.91.205:3030" >> frontend/.env
             cat frontend/.env
       - run:
           name: Deploy frontend objects
@@ -425,6 +425,7 @@ jobs:
 workflows:
   default:
     jobs:
+      - smoke-test
 #      - build-frontend
 #      - build-backend
 #      - test-frontend:
@@ -451,58 +452,58 @@ workflows:
 #            branches:
 #              only:
 #                - master
-      - deploy-infrastructure:
-          filters:
-            branches:
-              only:
-                - master
-      - configure-infrastructure:
-          requires:
-            - deploy-infrastructure
-          filters:
-            branches:
-              only:
-                - master
-      - run-migrations:
-          requires:
-            - configure-infrastructure
-          filters:
-            branches:
-              only:
-                - master
-      - deploy-frontend:
-          requires:
-            - run-migrations
-          filters:
-            branches:
-              only:
-                - master
-      - deploy-backend:
-          requires:
-            - run-migrations
-          filters:
-            branches:
-              only:
-                - master
-      - smoke-test:
-          requires:
-            - deploy-frontend
-            - deploy-backend
-          filters:
-            branches:
-              only:
-                - master
-      - cloudfront-update:
-          requires:
-            - smoke-test
-          filters:
-            branches:
-              only:
-                - master
-      - cleanup:
-          requires:
-            - cloudfront-update
-          filters:
-            branches:
-              only:
-                - master
+#      - deploy-infrastructure:
+#          filters:
+#            branches:
+#              only:
+#                - master
+#      - configure-infrastructure:
+#          requires:
+#            - deploy-infrastructure
+#          filters:
+#            branches:
+#              only:
+#                - master
+#      - run-migrations:
+#          requires:
+#            - configure-infrastructure
+#          filters:
+#            branches:
+#              only:
+#                - master
+#      - deploy-frontend:
+#          requires:
+#            - run-migrations
+#          filters:
+#            branches:
+#              only:
+#                - master
+#      - deploy-backend:
+#          requires:
+#            - run-migrations
+#          filters:
+#            branches:
+#              only:
+#                - master
+#      - smoke-test:
+#          requires:
+#            - deploy-frontend
+#            - deploy-backend
+#          filters:
+#            branches:
+#              only:
+#                - master
+#      - cloudfront-update:
+#          requires:
+#            - smoke-test
+#          filters:
+#            branches:
+#              only:
+#                - master
+#      - cleanup:
+#          requires:
+#            - cloudfront-update
+#          filters:
+#            branches:
+#              only:
+#                - master

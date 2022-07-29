@@ -326,6 +326,7 @@ jobs:
           command: |
             echo "---- cat inventory.txt"
             cat ~/project/.circleci/ansible/inventory.txt
+            ansible-playbook -v -i inventory.txt deploy-backend.yml
 #            cd backend
 #            echo "--- pwd ---"
 #            pwd
@@ -345,7 +346,7 @@ jobs:
 #            echo "Contents  of the inventory.txt file is -------"
 #            cat inventory.txt
 #            echo "--- ---"
-            ansible-playbook -v -i inventory.txt deploy-backend.yml
+
   smoke-test:
     docker:
       - image: circleci/node:13.8.0 #--- cimg/python:3.10.5-node

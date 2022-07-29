@@ -315,6 +315,7 @@ jobs:
           command: |
             echo "---- cat inventory.txt"
             cat ~/project/.circleci/ansible/inventory.txt
+            cd ~/project/.circleci/ansible/
             ansible-playbook -v -i inventory.txt deploy-backend.yml
 #            cd backend
 #            echo "--- pwd ---"

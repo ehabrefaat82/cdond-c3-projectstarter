@@ -1,53 +1,69 @@
-- name: "update server"
+- name: install dependencies
   become: yes
+  user: ubuntu
   shell: |
-    echo "---- apt update ----"
     sudo apt update
-  register: updateserver
-- debug: msg= "{{ updateserver.stdout }}"
-- debug: msg= "{{ updateserver.stderr }}"
-
-- name: "install python3-zunclient"
-  become: yes
-  shell: |
-    echo "---- apt install -y python3-zunclient ----"
-    sudo apt install -y python3-zunclient
-  register: python3zunclient
-- debug: msg= "{{ python3zunclient.stdout }}"
-- debug: msg= "{{ python3zunclient.stderr }}"
-
-- name: "install node, npm and pm2"
-  become: yes
-  shell: |
-    echo "---- apt install -y nodejs ----"
+    sudo apt-get update && sudo apt-get -y upgrade
     sudo apt install -y nodejs
-    echo "---- apt install -y npm ----"
     sudo apt install -y npm
-    echo "---- npm install pm2@latest -g ----"
     sudo npm install pm2@latest -g
-  register: nodenpmpm2
-- debug: msg= "{{ nodenpmpm2.stdout }}"
-- debug: msg= "{{ nodenpmpm2.stderr }}"
 
-- name: "env-variables"
-  become: yes
-  shell: |
-    echo "---- DB hostname: 54.166.18.127 ----"
-    echo "---- env variables ----"
-    export TYPEORM_CONNECTION=postgres
-    export TYPEORM_MIGRATIONS_DIR=./src/migrations
-    export TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts
-    export TYPEORM_MIGRATIONS=./src/migrations/*.ts
-    export TYPEORM_HOST=34.203.10.167
-    export TYPEORM_PORT=5432
-    export TYPEORM_USERNAME=postgres
-    export TYPEORM_PASSWORD=postgres
-    export TYPEORM_DATABASE=postgres
-    env
-  register: envvariables
 
-- debug: msg="{{ envvariables.stdout }}"
-- debug: msg="{{ envvariables.stderr }}"
+
+
+
+
+
+#- name: "update server"
+#  become: yes
+#  shell: |
+#    echo "---- apt update ----"
+#    sudo apt update
+#  register: updateserver
+#- debug: msg= "{{ updateserver.stdout }}"
+#- debug: msg= "{{ updateserver.stderr }}"
+#
+#- name: "install python3-zunclient"
+#  become: yes
+#  shell: |
+#    echo "---- apt install -y python3-zunclient ----"
+#    sudo apt install -y python3-zunclient
+#  register: python3zunclient
+#- debug: msg= "{{ python3zunclient.stdout }}"
+#- debug: msg= "{{ python3zunclient.stderr }}"
+#
+#- name: "install node, npm and pm2"
+#  become: yes
+#  shell: |
+#    echo "---- apt install -y nodejs ----"
+#    sudo apt install -y nodejs
+#    echo "---- apt install -y npm ----"
+#    sudo apt install -y npm
+#    echo "---- npm install pm2@latest -g ----"
+#    sudo npm install pm2@latest -g
+#  register: nodenpmpm2
+#- debug: msg= "{{ nodenpmpm2.stdout }}"
+#- debug: msg= "{{ nodenpmpm2.stderr }}"
+#
+#- name: "env-variables"
+#  become: yes
+#  shell: |
+#    echo "---- DB hostname: 54.166.18.127 ----"
+#    echo "---- env variables ----"
+#    export TYPEORM_CONNECTION=postgres
+#    export TYPEORM_MIGRATIONS_DIR=./src/migrations
+#    export TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts
+#    export TYPEORM_MIGRATIONS=./src/migrations/*.ts
+#    export TYPEORM_HOST=34.203.10.167
+#    export TYPEORM_PORT=5432
+#    export TYPEORM_USERNAME=postgres
+#    export TYPEORM_PASSWORD=postgres
+#    export TYPEORM_DATABASE=postgres
+#    env
+#  register: envvariables
+#
+#- debug: msg="{{ envvariables.stdout }}"
+#- debug: msg="{{ envvariables.stderr }}"
 
 
 #- name: "update apt packages."

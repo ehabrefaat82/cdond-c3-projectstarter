@@ -27,7 +27,7 @@ commands:
           command: |
             SUCCESS = $(curl --insecure https://kvdb.io/5QkEDmw6S9aSQMQpWgQJ6f/migration_${CIRCLE_WORKFLOW_ID:0:7})
             SUCCESS = 1
-            if(( $SUCCESS==1 )); 
+            if SUCCESS==1  
             then
               cd ~/project/backend
               npm install
@@ -346,6 +346,7 @@ jobs:
       - image: circleci/node:13.8.0 #--- cimg/python:3.10.5-node
     steps:
       - checkout
+      - install-dependencies
       - run:
           name: Frontend smoke test.
           command: |

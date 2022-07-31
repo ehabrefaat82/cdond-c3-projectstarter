@@ -48,6 +48,15 @@ commands:
             aws --version
 
 jobs:
+  say-hello:
+    docker:
+      - image: cimg/aws:2022.06
+    steps:
+      - checkout
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            echo "hello World"
   #-------- deploy-infra phase --------
   deploy-infrastructure:
     docker:
@@ -145,13 +154,14 @@ jobs:
 workflows:
   default:
     jobs:
-      - deploy-infrastructure
-      - deploy-frontend:
-          requires:
-            - deploy-infrastructure
-      - cloudfront-update:
-          requires:
-            - deploy-frontend
-      - cleanup:
-          requires:
-            - cloudfront-update
+      - say-hello
+#      - deploy-infrastructure
+#      - deploy-frontend:
+#          requires:
+#            - deploy-infrastructure
+#      - cloudfront-update:
+#          requires:
+#            - deploy-frontend
+#      - cleanup:
+#          requires:
+#            - cloudfront-update
